@@ -1,5 +1,5 @@
 import { PrismaClient } from "./generated/prisma"
-
+import { PrismaLibSQL } from "@prisma/adapter-libsql"
 const globalForPrisma = globalThis as {
     prisma?: PrismaClient;
 }
