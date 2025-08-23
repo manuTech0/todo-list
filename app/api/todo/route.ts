@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import prisma from "../../../lib/prisma";
 import z from "zod";
 import DOMPurify from "isomorphic-dompurify"
+import { authOptions } from "@/lib/authOptions";
 
 
 const todoSchema = z.object({
@@ -43,7 +44,7 @@ export async function OPTIONS(req: NextRequest) {
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse>> {
-    const session = await getServerSession()
+    const session = await getServerSession(authOptions)
     const getOrigin = request.headers.get("Origin")
     if(session && session.user && session.user.email) {
         const db = await prisma.todos.findUnique({
@@ -79,7 +80,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
 export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse<ErrorZod[]>>> {
     const getOrigin = request.headers.get("Origin")
     try {
-        const session = await getServerSession()
+        const session = await getServerSession(authOptions)
         if(session && session.user) {
             const { data }: { data: string } = await request.json()
             const userData = await prisma.todos.count({
