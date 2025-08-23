@@ -26,6 +26,7 @@ const corsHeaders: HeadersInit = {
   "Access-Control-Allow-Origin": process.env.ALLOW_DOMAIN || "h",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Cookie",
+  "Access-Control-Allow-Credentials": "true",
 }
 
 export async function OPTIONS(req: NextRequest) {
