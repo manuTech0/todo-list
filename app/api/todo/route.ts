@@ -25,7 +25,8 @@ interface TodoItem extends z.infer<typeof todoSchema> {}
 
 function corsHeaders(origin: string | null): HeadersInit {
     const envAllowDomain: string[] | undefined = process.env.ALLOW_DOMAIN?.split(", ")
-     const isAllowed = origin && envAllowDomain && envAllowDomain.includes(origin);
+    const isAllowed = origin && envAllowDomain && envAllowDomain.includes(origin);
+    console.log(envAllowDomain, origin, isAllowed)
     return {
       "Access-Control-Allow-Origin": isAllowed ? origin : "",
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
@@ -43,6 +44,7 @@ export async function OPTIONS(req: NextRequest) {
 
 export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse>> {
     const session = await getServerSession()
+    const getOrigin = request.headers.get("Origin")
     if(session && session.user && session.user.email) {
         const db = await prisma.todos.findUnique({
             where: { email: session.user.email }
@@ -54,27 +56,28 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
                     message: "Sucess get data",
                     data: todoData,
                     error: false
-                }, { status: 200, headers: corsHeaders(request.headers.get("origin")) })
+                }, { status: 200, headers: corsHeaders(getOrigin) })
             }
             return NextResponse.json({
                 message: "Data todo in db is break",
                 error: true
-            }, { status: 409, headers: corsHeaders(request.headers.get("origin")) })
+            }, { status: 409, headers: corsHeaders(getOrigin) })
         }
         return NextResponse.json({
             message: "null data",
             error: true
-        }, { status: 404, headers: corsHeaders(request.headers.get("origin")) })
+        }, { status: 404, headers: corsHeaders(getOrigin) })
     } else {
         return NextResponse.json({
             message: "permission invalid",
             error: true
-        }, { status: 401, headers: corsHeaders(request.headers.get("origin")) })
+        }, { status: 401, headers: corsHeaders(getOrigin) })
     }
 
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse<ErrorZod[]>>> {
+    const getOrigin = request.headers.get("Origin")
     try {
         const session = await getServerSession()
         if(session && session.user) {
@@ -95,7 +98,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
                 return NextResponse.json({
                     error: false,
                     message: "Success save data"
-                }, { status: 200, headers: corsHeaders(request.headers.get("origin")) })
+                }, { status: 200, headers: corsHeaders(getOrigin) })
             } else {
                 await prisma.todos.update({
                     where: { email: session.user.email ?? "" },
@@ -106,13 +109,13 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
                 return NextResponse.json({
                     error: false,
                     message: "Success save data"
-                }, { status: 200, headers: corsHeaders(request.headers.get("origin")) })
+                }, { status: 200, headers: corsHeaders(getOrigin) })
             }
         } 
         return NextResponse.json({
             message: "permission invalid",
             error: true
-        }, { status: 401, headers: corsHeaders(request.headers.get("origin")) })
+        }, { status: 401, headers: corsHeaders(getOrigin) })
     } catch (error) {
          if(error instanceof z.ZodError) {
             const errorMessage: ErrorZod[] = error.issues.map(err => ({
@@ -124,12 +127,12 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
                 message: "Error Validating",
                 data: errorMessage,
                 error: true,
-            }, { status: 400, headers: corsHeaders(request.headers.get("origin")) })
+            }, { status: 400, headers: corsHeaders(getOrigin) })
         }
         return NextResponse.json({
             message: "Unknown error",
             error: true
-        }, { status: 500, headers: corsHeaders(request.headers.get("origin")) })
+        }, { status: 500, headers: corsHeaders(getOrigin) })
     }
 
 }

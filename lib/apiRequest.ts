@@ -2,7 +2,8 @@ import axios, { AxiosHeaders, AxiosResponse } from 'axios';
 export async function apiRequest(method: "GET" | "POST" | "DELETE" | "PUT", path: string, body?: Object): Promise<ApiResponse> {
     const baseurl = process.env?.API_URL || "http://localhost:3000" + "/api"
     const defaultHeaders: HeadersInit = {
-        "Content-Type": "applications/json"
+        "Content-Type": "applications/json",
+        "Origin": window.location.origin
     }
     let response: undefined | AxiosResponse = undefined
     switch (method) {
