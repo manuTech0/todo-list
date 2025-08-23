@@ -27,7 +27,6 @@ interface TodoItem extends z.infer<typeof todoSchema> {}
 function corsHeaders(origin: string | null): HeadersInit {
     const envAllowDomain: string[] | undefined = process.env.ALLOW_DOMAIN?.split(", ")
     const isAllowed = origin && envAllowDomain && envAllowDomain.includes(origin);
-    console.log(envAllowDomain, origin, isAllowed)
     return {
       "Access-Control-Allow-Origin": isAllowed ? origin : "",
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
