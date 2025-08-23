@@ -22,17 +22,22 @@ const todoSchema = z.object({
 
 interface TodoItem extends z.infer<typeof todoSchema> {}
 
-const corsHeaders: HeadersInit = {
-  "Access-Control-Allow-Origin": process.env.ALLOW_DOMAIN || "h",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Cookie",
-  "Access-Control-Allow-Credentials": "true",
+
+function corsHeaders(origin: string | null): HeadersInit {
+    const envAllowDomain: string[] | undefined = process.env.ALLOW_DOMAIN?.split(", ")
+     const isAllowed = origin && envAllowDomain && envAllowDomain.includes(origin);
+    return {
+      "Access-Control-Allow-Origin": isAllowed ? origin : "",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Cookie",
+      "Access-Control-Allow-Credentials": "true",
+    }
 }
 
 export async function OPTIONS(req: NextRequest) {
   return new NextResponse(null, {
     status: 204,
-    headers: corsHeaders,
+    headers: corsHeaders(req.headers.get("origin")),
   })
 }
 
@@ -49,22 +54,22 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
                     message: "Sucess get data",
                     data: todoData,
                     error: false
-                }, { status: 200, headers: corsHeaders })
+                }, { status: 200, headers: corsHeaders(request.headers.get("origin")) })
             }
             return NextResponse.json({
                 message: "Data todo in db is break",
                 error: true
-            }, { status: 409, headers: corsHeaders })
+            }, { status: 409, headers: corsHeaders(request.headers.get("origin")) })
         }
         return NextResponse.json({
             message: "null data",
             error: true
-        }, { status: 404, headers: corsHeaders })
+        }, { status: 404, headers: corsHeaders(request.headers.get("origin")) })
     } else {
         return NextResponse.json({
             message: "permission invalid",
             error: true
-        }, { status: 401, headers: corsHeaders })
+        }, { status: 401, headers: corsHeaders(request.headers.get("origin")) })
     }
 
 }
@@ -90,7 +95,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
                 return NextResponse.json({
                     error: false,
                     message: "Success save data"
-                }, { status: 200, headers: corsHeaders })
+                }, { status: 200, headers: corsHeaders(request.headers.get("origin")) })
             } else {
                 await prisma.todos.update({
                     where: { email: session.user.email ?? "" },
@@ -101,13 +106,13 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
                 return NextResponse.json({
                     error: false,
                     message: "Success save data"
-                }, { status: 200, headers: corsHeaders })
+                }, { status: 200, headers: corsHeaders(request.headers.get("origin")) })
             }
         } 
         return NextResponse.json({
             message: "permission invalid",
             error: true
-        }, { status: 401, headers: corsHeaders })
+        }, { status: 401, headers: corsHeaders(request.headers.get("origin")) })
     } catch (error) {
          if(error instanceof z.ZodError) {
             const errorMessage: ErrorZod[] = error.issues.map(err => ({
@@ -119,12 +124,12 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
                 message: "Error Validating",
                 data: errorMessage,
                 error: true,
-            }, { status: 400, headers: corsHeaders })
+            }, { status: 400, headers: corsHeaders(request.headers.get("origin")) })
         }
         return NextResponse.json({
             message: "Unknown error",
             error: true
-        }, { status: 500, headers: corsHeaders })
+        }, { status: 500, headers: corsHeaders(request.headers.get("origin")) })
     }
 
 }
