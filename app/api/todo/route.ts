@@ -129,6 +129,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
                 error: true,
             }, { status: 400, headers: corsHeaders(getOrigin) })
         }
+        console.error(error)
         return NextResponse.json({
             message: "Unknown error",
             error: true
