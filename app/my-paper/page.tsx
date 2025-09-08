@@ -128,7 +128,7 @@ export default function MyPaper() {
                 className="px-10 pt-12 pb-14 bg-yellow-500 shadow-lg w-full h-full"
             >
                 {((!filteredTodos || filteredTodos.length < 9) ? [...((!filteredTodos) ? [] : filteredTodos), ...Array(9 - ((!filteredTodos) ? 0 : filteredTodos!.length))] : filteredTodos).map((todo: TodoItem, i) => (
-                    <li key={todo?.id ?? i} className="w-full pb-2 h-16 px-2 text-2xl border-b-2 border-black flex space-between items-center">
+                    <li key={todo?.id ?? i} className="w-full pb-2 h-10 sm:h-16 px-2 text-xs sm:text-2xl border-b-2 border-black flex space-between items-center">
                         { filteredTodos  && filteredTodos.length == i && showForm && showForm["add"] && showForm["add"].form ? (
                             <LineForm setShowForm={setShowForm} formHandle={addSubmit} inputHandle={setInputValue}/>
                         ) : (
@@ -144,7 +144,7 @@ export default function MyPaper() {
                                                         <div className="flex justify-between w-full items-center h-full">
                                                             <div className="ms-5 w-full">
                                                                 <h1 className={`${todo && filteredTodos && checkeds.listChecked[todo.id] && checkeds.listChecked[todo.id].checked ? "line-through" : ""} `}>{ todo.title }</h1>
-                                                                <span className="text-sm w-full text-gray-500 flex sm:flex-col sm:text-xs md:text-xs md:flex-col lg:flex-row">
+                                                                <span className="text-sm w-full text-gray-500 flex sm:flex-col text-[0.5rem] sm:text-xs md:flex-col lg:flex-row">
                                                                     { new Date(todo.updateAt).toLocaleString("en-US", {
                                                                         year: "numeric",    
                                                                         month: "long",
@@ -165,6 +165,9 @@ export default function MyPaper() {
                                                                     <DropdownMenuItem>
                                                                         <Button variant="ghost" className="decoration-none no-underline rounded-l-none" onClick={() => deleteHandle(todo.id)}><Trash /> Delete</Button>
                                                                     </DropdownMenuItem>
+                                                                    {/* <DropdownMenuItem>
+                                                                        <Button variant="ghost" className="decoration-none no-underline rounded-l-none" onClick={() => console}><Trash /> Detail</Button>
+                                                                    </DropdownMenuItem> */}
                                                                 </DropdownMenuContent>
                                                             </DropdownMenu>
                                                         </div>

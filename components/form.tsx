@@ -34,7 +34,7 @@ export function LineForm({ data, setShowForm, formHandle, inputHandle }: {
     }
 
     return (
-        <li className="w-full h-16 px-2 text-2xl border-b-2 border-black flex space-start items-center">
+        <li className="w-full h-10 sm:h-16 px-2 text-2xl border-b-2 border-black flex space-start items-center">
             <form className="w-full" method="post" onSubmit={val => formHandle(val)}>
                 <div className="flex justify-between w-full">
                     <input name="id" type="hidden" defaultValue={data?.id} />

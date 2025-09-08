@@ -23,7 +23,7 @@ export function Navbar({ setSearch, setShowForm, unsave, handleSave, handleSync 
 
     return (
         <AlertDialog>
-            <div className="bg-background px-2 h-11 fixed flex items-center justify-between top-0 pt-0 w-screen">
+            <div className="bg-background px-2 h-11 text-xs fixed flex items-center justify-between top-0 pt-0 w-screen">
                 <Menubar className="bg-background">
                     <MenubarMenu>
                         <MenubarTrigger onClick={() => handleSave()} className={ unsave || unsave ? "bg-red-500" : ""}>{ unsave || unsave ? "Save" : "Saved" }</MenubarTrigger>
