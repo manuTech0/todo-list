@@ -1,68 +1,97 @@
 "use client"
-import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "./ui/menubar"
-import { Button } from "./ui/button"
 import * as React from "react"
-import { Input } from "./ui/input"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog"
-import { LogOutIcon } from "lucide-react"
-import { signOut, useSession } from "next-auth/react"
+import { CloudCogIcon, CloudUpload, LogOutIcon, Moon, RecycleIcon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
+import { usePathname } from "next/navigation"
+import { useAuth } from "@/lib/useAuth"
+import { toast } from "sonner"
+import axios, { AxiosResponse } from "axios"
+import { useRouter } from "next/navigation"
 
-export function Navbar({ setSearch, setShowForm, unsave, handleSave, handleSync }: { 
-    setSearch: React.Dispatch<React.SetStateAction<string>>,
-    setShowForm: React.Dispatch<React.SetStateAction<{
-        [key: number | string]: {
-            form: boolean;
-            edit?: boolean;
-        };
-    } | undefined>>,
-    unsave?: boolean,
-    handleSave: () => void,
-    handleSync: () => void
+export function Navbar({
+    saveData,
+    syncData
+
+}: { 
+    saveData?: () => Promise<void>
+    syncData?: () => Promise<void>
 }) {
-    const session = useSession()
+    const {theme, setTheme} = useTheme()
+    const { isAuth, user } = useAuth()
+    const pathname = usePathname()
+    const router = useRouter()
+
+    const logout = () => {
+        const url = (process.env.NEXT_PUBLIC_GRAPHQL_URL || "http://localhost:4000") + "/auth/logout"
+        console.log(url)
+        toast.promise(axios.post(url, {}, {
+            withCredentials: true
+        }), {
+            loading: "Logout...",
+            error: (e) => {
+                console.log(e)
+                return "Failed Logout"
+            },
+            success: (res: AxiosResponse) => {
+                if(res.data.logout) {
+                    localStorage.removeItem("unsave")
+                    setTimeout(() => {
+                        router.push("/")
+                    }, 300);
+                    return "Success logout"
+                }
+            }
+        })
+    }
 
     return (
-        <AlertDialog>
-            <div className="bg-background px-2 h-11 text-xs fixed flex items-center justify-between top-0 pt-0 w-screen">
-                <Menubar className="bg-background">
-                    <MenubarMenu>
-                        <MenubarTrigger onClick={() => handleSave()} className={ unsave || unsave ? "bg-red-500" : ""}>{ unsave || unsave ? "Save" : "Saved" }</MenubarTrigger>
-                    </MenubarMenu>
-                    <MenubarMenu>
-                        <MenubarTrigger onClick={() => setShowForm({ "add": { form: true } })}>New</MenubarTrigger>
-                    </MenubarMenu>
-                    <MenubarMenu>
-                        <MenubarTrigger>Profiles</MenubarTrigger>
-                        <MenubarContent>
-                            <AlertDialogTrigger asChild>
-                                <MenubarItem><LogOutIcon /> Logout</MenubarItem>
-                            </AlertDialogTrigger>
-                        </MenubarContent>
-                    </MenubarMenu>
-                    <MenubarMenu>
-                        <MenubarTrigger onClick={() => handleSync()}>Sync</MenubarTrigger>
-                    </MenubarMenu>
-                </Menubar>
-                <div>
-                    <Input
-                        placeholder="Search title..."
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="max-w-sm"
-                    />
+        <nav className="w-full flex items-center justify-between px-4 sm:px-6 py-3 border-b border-slate-200 dark:border-slate-800">
+            <div className="flex items-center gap-2">
+                <div className="w-9 h-9 rounded-md bg-gradient-to-br from-indigo-500 via-sky-400 to-emerald-400 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                    TD
                 </div>
+                <span className="text-base font-semibold text-slate-900 dark:text-slate-100">
+                    Todo App
+                </span>
             </div>
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure you want to log out?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        After logging out, you’ll need to sign in again to access your account.
-                    </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => signOut()}>Continue</AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
+
+            <div className="flex justify-end gap-4">
+                {pathname != "/" && syncData && saveData && isAuth && (
+                    <div className="flex gap-4">
+                        <button
+                            onClick={() => syncData()}
+                            aria-label="Sync Data"
+                            className="p-2 rounded-lg border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+                        >
+                            <CloudCogIcon size={18}/>
+                        </button>
+                        <button
+                            onClick={() => saveData()}
+                            aria-label="Save Data"
+                            className="p-2 rounded-lg border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+                        >
+                            <CloudUpload size={18}/>
+                        </button>
+                        
+                    </div>
+                )}
+                <button
+                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                    aria-label="Toggle theme"
+                    className="p-2 rounded-lg border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+                >
+                    {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+                </button>
+                {isAuth && (
+                    <button
+                        onClick={() => logout()}
+                        aria-label="Save Data"
+                        className="p-2 rounded-lg border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+                    >
+                        <LogOutIcon size={18}/>
+                    </button>
+                )}
+            </div>
+        </nav>
     )
 }

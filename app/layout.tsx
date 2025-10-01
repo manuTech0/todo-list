@@ -2,7 +2,8 @@ import * as React from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Roboto_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthSessionProvider,ThemeProvider } from "@/components/providers";
+import { ThemeProvider } from "@/components/providers";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,16 +48,14 @@ export default function RootLayout({
           className={`${roboto.variable} antialiased`}
           suppressHydrationWarning
         >
-          <AuthSessionProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              {children}
-            </ThemeProvider>
-          </AuthSessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
         </body>
       </html>
     </>
