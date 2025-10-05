@@ -15,7 +15,7 @@ export default function HomeLanding({ onSignIn, onGuest }: Props) {
   if(isAuth && user) {
     window.location.href = "/app"
   }
-  const urlAuth = process.env.NEXT_PUBLIC_GRAPHQL_URL || "http://localhost:4000/?redirect_url=" + encodeURIComponent((process.env.REDIRECT_URL || "http://localhost:3000") + "/sign")
+  const urlAuth = (process.env.NEXT_PUBLIC_GRAPHQL_URL || "http://localhost:4000") + "/?redirect_url=" + encodeURIComponent((process.env.REDIRECT_URL || "http://localhost:3000") + "/sign")
   const isLoggin = cookie.get("isLogged")
   const handleSignIn = () => {
     if (onSignIn) return onSignIn();
