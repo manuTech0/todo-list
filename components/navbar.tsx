@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/useAuth"
 import { toast } from "sonner"
 import axios, { AxiosResponse } from "axios"
 import { useRouter } from "next/navigation"
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
 
 export function Navbar({
     saveData,
@@ -43,7 +44,6 @@ export function Navbar({
             }
         })
     }
-    console.log(user)
 
     return (
         <nav className="w-full flex items-center justify-between px-4 sm:px-6 py-3 border-b border-slate-200 dark:border-slate-800">
@@ -59,38 +59,66 @@ export function Navbar({
             <div className="flex justify-end gap-4">
                 {pathname != "/" && syncData && saveData && isAuth && (
                     <div className="flex gap-4">
-                        <button
-                            onClick={() => syncData()}
-                            aria-label="Sync Data"
-                            className="p-2 rounded-lg border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700"
-                        >
-                            <CloudCogIcon size={18}/>
-                        </button>
-                        <button
-                            onClick={() => saveData()}
-                            aria-label="Save Data"
-                            className="p-2 rounded-lg border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700"
-                        >
-                            <CloudUpload size={18}/>
-                        </button>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <button
+                                    onClick={() => syncData()}
+                                    aria-label="Sync Data"
+                                    className="p-2 rounded-lg border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+                                >
+                                    <CloudCogIcon size={18}/>
+                                </button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Sync Data
+                            </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <button
+                                    onClick={() => saveData()}
+                                    aria-label="Save Data"
+                                    className="p-2 rounded-lg border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+                                >
+                                    <CloudUpload size={18}/>
+                                </button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                Save To Cloud
+                            </TooltipContent>
+                        </Tooltip>
                         
                     </div>
                 )}
-                <button
-                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                    aria-label="Toggle theme"
-                    className="p-2 rounded-lg border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700"
-                >
-                    {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-                </button>
+                <Tooltip>
+                    <TooltipTrigger>
+                        <button
+                            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                            aria-label="Toggle theme"
+                            className="p-2 rounded-lg border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+                        >
+                            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+                        </button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        Change theme
+                    </TooltipContent>
+                </Tooltip>
                 {isAuth && (
-                    <button
-                        onClick={() => logout()}
-                        aria-label="Save Data"
-                        className="p-2 rounded-lg border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700"
-                    >
-                        <LogOutIcon size={18}/>
-                    </button>
+                    <Tooltip>
+                        <TooltipTrigger>
+                            <button
+                                onClick={() => logout()}
+                                aria-label="Save Data"
+                                className="p-2 rounded-lg border bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700"
+                            >
+                                <LogOutIcon size={18}/>
+                            </button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            Logout
+                        </TooltipContent>
+                    </Tooltip>
                 )}
             </div>
         </nav>

@@ -44,7 +44,6 @@ export function useAuth() {
             const res = await axios.post(apiUrl + "/graphql", { query },  {
                 withCredentials: true
             })
-            console.log(res.data)
             if("me" in res.data.data) {
                 const myUser = res.data.data.me
                 if(myUser) {

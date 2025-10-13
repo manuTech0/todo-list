@@ -2,7 +2,7 @@ import axios from 'axios';
 import cookie from "js-cookie";
 
 const token = cookie.get("token")
-
+const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "https://api.manu-tech.my.id") + "/graphql"
 export async function saveApiTodo(data: string) {  
   try {
     const query = `
@@ -16,7 +16,7 @@ export async function saveApiTodo(data: string) {
         }
       }
     `
-    const res = await axios.post((process.env.NEXT_PUBLIC_GRAPHQL_URL || "http://localhost:4000") + "/graphql", { query },  {
+    const res = await axios.post(apiUrl, { query },  {
       withCredentials: true
     })
     return res
@@ -48,7 +48,7 @@ export async function readApiTodo() {
         }
       }
     `
-    const res = await axios.post((process.env.NEXT_PUBLIC_GRAPHQL_URL || "http://localhost:4000") + "/graphql", { query },  {
+    const res = await axios.post(apiUrl, { query },  {
       withCredentials: true
     })
     return res
