@@ -22,8 +22,8 @@ export function Navbar({
     const router = useRouter()
 
     const logout = () => {
-        const url = (process.env.NEXT_PUBLIC_GRAPHQL_URL || "http://localhost:4000") + "/auth/logout"
-        console.log(url)
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://api.manu-tech.my.id"
+        const url = apiUrl + "/auth/logout"
         toast.promise(axios.post(url, {}, {
             withCredentials: true
         }), {
@@ -43,6 +43,7 @@ export function Navbar({
             }
         })
     }
+    console.log(user)
 
     return (
         <nav className="w-full flex items-center justify-between px-4 sm:px-6 py-3 border-b border-slate-200 dark:border-slate-800">

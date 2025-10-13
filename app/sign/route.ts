@@ -10,25 +10,9 @@ export async function GET(req: NextRequest) {
             token_type: string
         } = JSON.parse(tokenCookie)
         if(token.access_token) {
-            const res = NextResponse.redirect(new URL("/", req.url))
-            res.cookies.set("token", token.access_token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV == "production",
-                sameSite: "strict",
-                path: "/",
-                maxAge: Math.floor(new Date(token.expires_in).getTime() / 1000)
-            })
-            res.cookies.set("isLogged", String(new Date(token.expires_in)), {
-                httpOnly: false,
-                secure: process.env.NODE_ENV == "production",
-                sameSite: "strict",
-                path: "/",
-                maxAge: Math.floor(new Date(token.expires_in).getTime() / 1000)
-            })
-            return res
+            return NextResponse.redirect(new URL("/app", req.url))
         }
     }
-    console.log(tokenCookie)
     return NextResponse.json({
         error: true,
         message: "Invalid Token"

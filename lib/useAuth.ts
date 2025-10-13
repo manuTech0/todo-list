@@ -16,6 +16,8 @@ interface User {
     verified: boolean
 }
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://api.manu-tech.my.id"
+
 export function useAuth() {
     const [isAuth, setIsAuth] = useState(false)
     const [user, setUser] = useState<User | undefined>(undefined)
@@ -39,9 +41,10 @@ export function useAuth() {
             }
         `;
         (async () => {
-            const res = await axios.post((process.env.NEXT_PUBLIC_GRAPHQL_URL || "http://localhost:4000") + "/graphql", { query },  {
+            const res = await axios.post(apiUrl + "/graphql", { query },  {
                 withCredentials: true
             })
+            console.log(res.data)
             if("me" in res.data.data) {
                 const myUser = res.data.data.me
                 if(myUser) {

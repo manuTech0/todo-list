@@ -4,6 +4,7 @@ import { useTheme } from "next-themes";
 import { Navbar } from "@/components/navbar";
 import cookie from "js-cookie";
 import { useAuth } from "@/lib/useAuth";
+import { useRouter } from "next/navigation";
 interface Props {
   onSignIn?: () => void;
   onGuest?: () => void;
@@ -15,11 +16,10 @@ export default function HomeLanding({ onSignIn, onGuest }: Props) {
   if(isAuth && user) {
     window.location.href = "/app"
   }
-  const urlAuth = (process.env.NEXT_PUBLIC_GRAPHQL_URL || "http://localhost:4000") + "/?redirect_url=" + encodeURIComponent((process.env.REDIRECT_URL || "http://localhost:3000") + "/sign")
-  const isLoggin = cookie.get("isLogged")
+  const router = useRouter()
   const handleSignIn = () => {
     if (onSignIn) return onSignIn();
-    if (typeof window !== "undefined") window.location.href = isLoggin ? "/app" : urlAuth;
+    if (typeof window !== "undefined") isAuth ? router.replace("/app") : router.replace("/login")
   };
 
   const handleGuest = (e?: React.MouseEvent) => {
